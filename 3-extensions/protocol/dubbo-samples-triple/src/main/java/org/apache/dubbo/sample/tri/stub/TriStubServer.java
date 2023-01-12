@@ -19,10 +19,7 @@ package org.apache.dubbo.sample.tri.stub;
 
 import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.context.Lifecycle;
-import org.apache.dubbo.config.ApplicationConfig;
-import org.apache.dubbo.config.ProtocolConfig;
-import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.ServiceConfig;
+import org.apache.dubbo.config.*;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.sample.tri.Greeter;
 import org.apache.dubbo.sample.tri.util.EmbeddedZooKeeper;
@@ -52,14 +49,26 @@ public class TriStubServer implements Lifecycle {
 
     @Override
     public void start() throws IllegalStateException {
+
+        // protocol
+        final ProtocolConfig protocolConfig = new ProtocolConfig(CommonConstants.TRIPLE, port);
+        protocolConfig.setHost(TriSampleConstants.HOST);
+        final RegistryConfig registryConfig = new RegistryConfig(TriSampleConstants.ZK_ADDRESS);
         ServiceConfig<Greeter> service = new ServiceConfig<>();
         service.setInterface(Greeter.class);
         service.setRef(new GreeterImpl("tri-stub"));
-
+        service.setRegistry(registryConfig);
+        final MetadataReportConfig metadataReportConfig = new MetadataReportConfig();
+        metadataReportConfig.setProtocol(CommonConstants.DEFAULT_PROTOCOL);
+        metadataReportConfig.setAddress(TriSampleConstants.ZK_ADDRESS);
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
-        bootstrap.application(new ApplicationConfig("tri-stub-server"))
-                .registry(new RegistryConfig(TriSampleConstants.ZK_ADDRESS))
-                .protocol(new ProtocolConfig(CommonConstants.TRIPLE, port))
+        final ApplicationConfig applicationConfig = new ApplicationConfig("tri-stub-server");
+        applicationConfig.setQosEnable(false);
+        applicationConfig.setMetadataServiceProtocol(CommonConstants.DEFAULT_PROTOCOL);
+        bootstrap.application(applicationConfig)
+                .registry(registryConfig)
+                .protocol(protocolConfig)
+                .metadataReport(metadataReportConfig)
                 .service(service)
                 .start();
     }

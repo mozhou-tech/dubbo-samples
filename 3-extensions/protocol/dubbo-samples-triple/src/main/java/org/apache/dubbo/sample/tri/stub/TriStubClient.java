@@ -25,7 +25,6 @@ import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.sample.tri.Greeter;
 import org.apache.dubbo.sample.tri.util.TriSampleClient;
 import org.apache.dubbo.sample.tri.util.TriSampleConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,10 +58,17 @@ public class TriStubClient extends TriSampleClient {
     }
 
     public static void main(String[] args) throws IOException {
-        final TriStubClient consumer = new TriStubClient();
-        consumer.unary();
+        try {
+            while (true) {
+                final TriStubClient consumer = new TriStubClient();
+                consumer.unary();
 //        consumer.stream();
 //        consumer.serverStream();
-        System.in.read();
+                System.in.read();
+                Thread.sleep(3000);
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
