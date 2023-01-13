@@ -43,6 +43,7 @@ public class TriStubClient extends TriSampleClient {
         ref.setInterface(Greeter.class);
         ref.setProtocol(CommonConstants.TRIPLE);
         ref.setProxy(CommonConstants.NATIVE_STUB);
+        ref.setLoadbalance("roundrobin");
         ref.setTimeout(3000);
 
         if (!direct) {
@@ -58,17 +59,18 @@ public class TriStubClient extends TriSampleClient {
     }
 
     public static void main(String[] args) throws IOException {
+        final TriStubClient consumer = new TriStubClient();
         try {
             while (true) {
-                final TriStubClient consumer = new TriStubClient();
                 consumer.unary();
-//        consumer.stream();
-//        consumer.serverStream();
-                System.in.read();
-                Thread.sleep(3000);
+                Thread.sleep(500);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+//        consumer.stream();
+//        consumer.serverStream();
+//        System.in.read();
     }
+
 }
