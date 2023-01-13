@@ -24,6 +24,7 @@ import org.apache.dubbo.sample.tri.DubboGreeterTriple.GreeterImplBase;
 import org.apache.dubbo.sample.tri.GreeterReply;
 import org.apache.dubbo.sample.tri.GreeterRequest;
 
+import org.apache.dubbo.sample.tri.util.TriSampleConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,7 @@ public class GreeterImpl extends GreeterImplBase {
     public GreeterReply greet(GreeterRequest request) {
         LOGGER.info("Server {} received greet request {}", serverName, request);
         return GreeterReply.newBuilder()
-                .setMessage("hello," + request.getName())
+                .setMessage("hello," + request.getName()+",my port is: "+ TriSampleConstants.SERVER_PORT)
                 .build();
     }
 
